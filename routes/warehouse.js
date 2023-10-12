@@ -1,66 +1,59 @@
-const express = require('express')
-const { Warehouse, Rack, Stock, Loading } = require('../models')
-const router = express.Router()
-
-router.get('/:wh_seq', async (req, res) => {
-    console.log("asd");
-    let wh_seq = req.params.wh_seq
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const models_1 = require("../models");
+const router = express_1.default.Router();
+router.get('/:wh_seq', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let wh_seq = req.params.wh_seq;
     try {
-        const warehouseList = await Warehouse.findOne({
+        const warehouseList = yield models_1.Warehouse.findOne({
             attributes: ['wh_width', 'wh_length'],
             where: {
-                wh_seq : wh_seq
+                wh_seq: wh_seq
             },
-
         });
-        // console.log('warehouseList 가져오기',warehouseList);
         res.json(warehouseList);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-})
-
-router.delete('/:wh_seq', async (req, res) => {
+}));
+router.delete('/:wh_seq', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const result = await Warehouse.destroy({
+        const result = yield models_1.Warehouse.destroy({
             where: {
                 wh_seq: req.params.wh_seq
             }
-        })
-        res.json(result)
-    } catch (error) {
+        });
+        res.json(result);
+    }
+    catch (error) {
         console.error(error);
     }
-})
-
-router.get('/wh_name/:com_seq', async (req, res) => {
+}));
+router.get('/wh_name/:com_seq', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const wareNameList = await Warehouse.findAll({
+        const wareNameList = yield models_1.Warehouse.findAll({
             where: { com_seq: req.params.com_seq },
             attributes: ['wh_name'],
-        })
-        res.json(wareNameList)
-    } catch (error) {
+        });
+        res.json(wareNameList);
+    }
+    catch (error) {
         console.error(error);
     }
-})
-
-// router.get('/:wh_seq', async (req, res) => {
-//     console.log("qwe");
-//     let wh_seq = req.params.wh_seq
-//     try{
-//         const rackList = await Rack.findAll({
-//             attributes: ['rack_x', 'rack_z', 'rack_width', 'rack_length', 'rack_floor'],
-//             where: {
-//                 wh_seq : wh_seq
-//             }
-//         })
-//         console.log('rackList 가져오기', rackList);
-//         res.json(rackList)
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: 'Internal Server Error' });
-//     }
-// })
-module.exports = router
+}));
+exports.default = router;

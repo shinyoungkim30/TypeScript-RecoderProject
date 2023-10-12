@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import path from 'path';
@@ -19,9 +19,9 @@ import wareRouter from './routes/ware';
 import warehouseRouter from './routes/warehouse';
 import { sequelize } from './models';
 import passportConfig from './passport';
-import webSocket from './socket';
+import webSocket from './socket'
 
-const app = express()
+const app: Express = express()
 passportConfig()
 app.set('port', process.env.PORT || 8000)
 
@@ -69,6 +69,6 @@ const server = app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 대기 중');
 })
 
-webSocket(server, app);
+webSocket(app, server);
 
 export default app;

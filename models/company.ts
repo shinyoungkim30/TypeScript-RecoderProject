@@ -11,7 +11,7 @@ class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Co
     declare com_name: string;
     declare com_address: string;
     declare com_tel: string;
-    declare created_at: Date;
+    declare created_at: CreationOptional<Date>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Company.init({

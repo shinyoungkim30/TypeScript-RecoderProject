@@ -1,23 +1,33 @@
-const express = require('express')
-const router = express.Router()
-// const User = require('../models/user');
-const { Notice, User, Warehouse, Rack, Loading, Stock, Company, sequelize, Sequelize } = require('../models'); // 모델들을 import
-const { Op, fn, col, literal } = require('sequelize');
-
-// 알림 내용 가져오기
-router.post('/alarm', async (req, res) => {
-    console.log('user_seq', req.body.user_seq)
-    let user_seq = req.body.user_seq
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const models_1 = require("../models");
+const sequelize_1 = require("sequelize");
+const router = express_1.default.Router();
+router.post("/alarm", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user_seq = req.body.user_seq;
     try {
-        const result = await Notice.findAll({
-            attributes: ['notice_content','notice_seq'],
+        const result = yield models_1.Notice.findAll({
+            attributes: ["notice_content", "notice_seq"],
             include: [
                 {
-                    model: Stock,
-                    attributes: ['stock_name'],
+                    model: models_1.Stock,
+                    attributes: ["stock_name"],
                     include: [
                         {
-                            model: Loading,
+                            model: models_1.Loading,
                             attributes: [],
                         },
                     ],
@@ -27,30 +37,26 @@ router.post('/alarm', async (req, res) => {
                 user_seq: user_seq,
             },
         });
-        // 결과를 클라이언트에 응답
         res.json(result);
-    } catch (error) {
-        console.error('오류:', error);
-        res.status(500).json({ error: '서버 오류' });
     }
-});
-
-// 알림 수량 변경
-router.post('/change', async (req, res) => {
-    console.log('알람변경', req.body);
+    catch (error) {
+        console.error("오류:", error);
+        res.status(500).json({ error: "서버 오류" });
+    }
+}));
+router.post("/change", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let { user_seq, stock_name, notice_content } = req.body;
     try {
-        // 먼저 해당 유저와 재고 이름에 대한 알림 정보를 조회합니다.
-        const result = await Notice.findOne({
-            attributes: ['notice_content', 'notice_seq'],
+        const result = yield models_1.Notice.findOne({
+            attributes: ["notice_content", "notice_seq"],
             include: [
                 {
-                    model: Stock,
-                    attributes: ['stock_name'],
+                    model: models_1.Stock,
+                    attributes: ["stock_name"],
                     where: { stock_name: stock_name },
                     include: [
                         {
-                            model: Loading,
+                            model: models_1.Loading,
                             attributes: [],
                         },
                     ],
@@ -60,117 +66,63 @@ router.post('/change', async (req, res) => {
                 user_seq: user_seq,
             },
         });
-
         if (!result) {
-            return res.status(404).json({ error: '해당 알림을 찾을 수 없습니다.' });
+            return res.status(404).json({ error: "해당 알림을 찾을 수 없습니다." });
         }
-
-        // 알림 정보가 있는 경우 알림 내용을 업데이트합니다.
         const notice_seq = result.notice_seq;
-        await Notice.update(
-            {
-                notice_content: notice_content,
+        yield models_1.Notice.update({
+            notice_content: notice_content,
+        }, {
+            where: {
+                notice_seq: notice_seq,
             },
-            {
-                where: {
-                    notice_seq: notice_seq,
-                },
-            }
-        );
-
-        // 업데이트된 결과를 클라이언트에 응답
-        res.json({ success: true, message: '알림 내용이 업데이트되었습니다.' });
-    } catch (error) {
-        console.error('오류:', error);
-        res.status(500).json({ error: '서버 오류' });
+        });
+        res.json({ success: true, message: "알림 내용이 업데이트되었습니다." });
     }
-});
-
-// 입고제품 리스트 조회
-router.post('/list', async (req, res) => {
-    console.log('com_seq', req.body.com_seq)
+    catch (error) {
+        console.error("오류:", error);
+        res.status(500).json({ error: "서버 오류" });
+    }
+}));
+router.post("/list", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const com_seq = req.body.com_seq;
-
-        // Full Outer Join을 사용하여 stock_name을 가져오는 SQL 쿼리를 작성합니다.
-        const result = await sequelize.query(`
+        const result = yield models_1.sequelize.query(`
               SELECT DISTINCT s.stock_name FROM stock AS s
             JOIN loading AS l ON l.stock_seq = s.stock_seq
               WHERE l.loading_type = 'I'  AND l.com_seq = ${com_seq}
             `);
-
-
         res.json(result);
-    } catch (error) {
-        console.error('오류:', error);
-        res.status(500).json({ error: '서버 오류' });
     }
-
-  
-});
-
-// 입고재품 재고량 조회
-router.post('/create', async (req, res) => {
-    //     console.log(req.body);
-    //     let { com_seq, wh_seq } = req.body
-    //     let stockNames = req.body.stock_name;
-
-    //     try {
-    //         const results = await Promise.all(stockNames.map(async (stockName) => {
-    //             const result = await Loading.sum('loading_cnt', {
-    //                 include: [
-    //                     {
-    //                         model: Stock,
-    //                         where: {
-    //                             stock_name: stockName,
-    //                         },
-    //                     },
-    //                 ],
-    //                 where: {
-    //                     loading_type: 'I',
-    //                     com_seq: com_seq,
-    //                 },
-    //             });
-    //             return { stockName, sum: result };
-    //         }));
-
-    //         console.log('각 stock_name 별 합계:');
-    //         results.forEach(({ stockName, sum }) => {
-    //             console.log(`${stockName}: ${sum}`);
-    //         });
-
-    //         // 클라이언트에게 결과 응답을 보내줍니다.
-    //         res.json(results);
-    //     } catch (error) {
-    //         console.error('오류:', error);
-    //         res.status(500).json({ error: '서버 오류' }); // 에러가 발생한 경우 500 상태 코드와 에러 메시지를 응답합니다.
-    //     }
-    // });
-    let { com_seq, wh_seq } = req.body
+    catch (error) {
+        console.error("오류:", error);
+        res.status(500).json({ error: "서버 오류" });
+    }
+}));
+router.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let { com_seq } = req.body;
     try {
-        const result = await Loading.findAll({
-            attributes: [
-                [fn('SUM', col('loading_cnt')), 'total_loading_cnt']
-            ],
+        const result = yield models_1.Loading.findAll({
+            attributes: [[(0, sequelize_1.fn)("SUM", (0, sequelize_1.col)("loading_cnt")), "total_loading_cnt"]],
             where: {
                 com_seq: com_seq,
-                [Op.or]: [
-                    { loading_type: 'I' },
+                [sequelize_1.Op.or]: [
+                    { loading_type: "I" },
                     // { loading_type: 'O' }
-                  ]
-                
+                ],
             },
-            include: [{
-                model: Stock,
-                attributes: ['stock_name', 'stock_name'],
-            }],
-            group: 'stock_name'
+            include: [
+                {
+                    model: models_1.Stock,
+                    attributes: ["stock_name", "stock_name"],
+                },
+            ],
+            group: "stock_name",
         });
         res.json(result);
-    } catch (error) {
+    }
+    catch (error) {
         console.error(error);
     }
-});
-
-
-module.exports = router;
+}));
+exports.default = router;

@@ -67,5 +67,5 @@ app.use('/stock', stock_1.default);
 const server = app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 대기 중');
 });
-(0, socket_1.default)(server, app);
+(0, socket_1.default)(app, server);
 exports.default = app;
