@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey,
 } from 'sequelize';
 import Company from './company';
 import Notice from './notice';
@@ -12,6 +12,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
     declare deletedAt: CreationOptional<Date>;
+
+    declare com_seq: ForeignKey<Company['com_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         User.init({

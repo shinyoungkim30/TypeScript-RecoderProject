@@ -1,12 +1,12 @@
-const { Stock } = require('../models')
+import { RequestHandler } from "express";
+import Stock from '../models/stock';
 
-exports.updateStockAfterUploadImg = async (req, res) => {
-
+const updateStockAfterUploadImg: RequestHandler = async (req, res) => {
   let stock_seq = req.body.stock_seq
-
+  
   try {
     const result = await Stock.update({
-      stock_img: `${req.file.filename}`
+      stock_img: `${req.file?.filename}`
     }, {
       where: { stock_seq: stock_seq }
     })
@@ -19,3 +19,5 @@ exports.updateStockAfterUploadImg = async (req, res) => {
     console.error(error);
   }
 }
+
+export { updateStockAfterUploadImg };

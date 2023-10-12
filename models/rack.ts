@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey,
 } from 'sequelize';
 import Warehouse from './warehouse';
 import Loading from './loading';
@@ -14,6 +14,8 @@ class Rack extends Model<InferAttributes<Rack>, InferCreationAttributes<Rack>> {
     declare rack_length: number;
     declare rack_floor: number;
     declare rack_rotate_yn: CreationOptional<string>;
+
+    declare wh_seq: ForeignKey<Warehouse['wh_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Rack.init({

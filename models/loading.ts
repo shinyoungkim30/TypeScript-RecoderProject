@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey
 } from 'sequelize';
 import Rack from './rack';
 import Stock from './stock';
@@ -15,6 +15,10 @@ class Loading extends Model<InferAttributes<Loading>, InferCreationAttributes<Lo
     declare stock_shipping_des: CreationOptional<string>;
     declare loading_manager: CreationOptional<string>;
     declare out_created_at: CreationOptional<Date>;
+    
+    declare com_seq: ForeignKey<Company['com_seq']>;
+    declare rack_seq: ForeignKey<Rack['rack_seq']>;
+    declare stock_seq: ForeignKey<Stock['stock_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Loading.init({

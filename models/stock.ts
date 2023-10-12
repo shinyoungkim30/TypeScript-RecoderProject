@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey,
 } from 'sequelize';
 import Loading from './loading';
 import Notice from './notice';
@@ -15,6 +15,8 @@ class Stock extends Model<InferAttributes<Stock>, InferCreationAttributes<Stock>
     declare stock_expired: Date;
     declare stock_balance_cnt: number;
     declare update_at: CreationOptional<Date>;
+
+    declare cl_seq: ForeignKey<Client['cl_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Stock.init({

@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey,
 } from 'sequelize';
 import Company from './company';
 import Rack from './rack';
@@ -12,6 +12,8 @@ class Warehouse extends Model<InferAttributes<Warehouse>, InferCreationAttribute
     declare createdAt: CreationOptional<Date>;
     declare updatedAt: CreationOptional<Date>;
     declare deletedAt: CreationOptional<Date>;
+
+    declare com_seq: ForeignKey<Company['com_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Warehouse.init({

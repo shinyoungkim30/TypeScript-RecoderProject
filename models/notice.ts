@@ -1,5 +1,5 @@
 import Sequelize, {
-    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+    Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey,
 } from 'sequelize';
 import User from './user';
 import Stock from './stock';
@@ -8,6 +8,9 @@ class Notice extends Model<InferAttributes<Notice>, InferCreationAttributes<Noti
     declare notice_seq: CreationOptional<number>;
     declare notice_content: string;
     declare noticed_at: Date;
+
+    declare user_seq: ForeignKey<User['user_id']>;
+    declare stock_seq: ForeignKey<Stock['stock_seq']>;
 
     static initiate(sequelize: Sequelize.Sequelize) {
         Notice.init({
