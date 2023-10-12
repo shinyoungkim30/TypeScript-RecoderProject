@@ -1,7 +1,19 @@
-const Sequelize = require('sequelize')
+import Sequelize, {
+    Model, CreationOptional, InferAttributes, InferCreationAttributes,
+} from 'sequelize';
+import User from './user';
+import Warehouse from './warehouse';
+import Loading from './loading';
 
-class Company extends Sequelize.Model {
-    static initiate(sequelize) {
+class Company extends Model<InferAttributes<Company>, InferCreationAttributes<Company>> {
+    declare com_seq: CreationOptional<number>;
+    declare com_business_num: string;
+    declare com_name: string;
+    declare com_address: string;
+    declare com_tel: string;
+    declare created_at: Date;
+
+    static initiate(sequelize: Sequelize.Sequelize) {
         Company.init({
             com_seq: {
                 type: Sequelize.INTEGER,
@@ -46,11 +58,11 @@ class Company extends Sequelize.Model {
         })
     }
 
-    static associate(db) {
-        db.Company.hasMany(db.User, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
-        db.Company.hasMany(db.Warehouse, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
-        db.Company.hasMany(db.Loading, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
+    static associate() {
+        Company.hasMany(User, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
+        Company.hasMany(Warehouse, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
+        Company.hasMany(Loading, { foreignKey: 'com_seq', sourceKey: 'com_seq' })
     }
 }
 
-module.exports = Company
+export default Company;

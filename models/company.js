@@ -27,50 +27,58 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = __importStar(require("sequelize"));
-const company_1 = __importDefault(require("./company"));
-const notice_1 = __importDefault(require("./notice"));
-class User extends sequelize_1.Model {
+const user_1 = __importDefault(require("./user"));
+const warehouse_1 = __importDefault(require("./warehouse"));
+const loading_1 = __importDefault(require("./loading"));
+class Company extends sequelize_1.Model {
     static initiate(sequelize) {
-        User.init({
-            user_seq: {
+        Company.init({
+            com_seq: {
                 type: sequelize_1.default.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-                comment: "사용자 식별자"
+                comment: "기업 식별자"
             },
-            user_id: {
+            com_business_num: {
+                type: sequelize_1.default.STRING(100),
+                allowNull: false,
+                comment: "사업자등록번호"
+            },
+            com_name: {
                 type: sequelize_1.default.STRING(50),
                 allowNull: false,
-                unique: true,
-                comment: "사용자 로그인 아이디"
+                comment: "기업명"
             },
-            user_pw: {
-                type: sequelize_1.default.STRING(200),
+            com_address: {
+                type: sequelize_1.default.STRING(600),
                 allowNull: false,
-                comment: "사용자 로그인 패스워드"
+                comment: "기업 주소"
             },
-            user_nick: {
+            com_tel: {
                 type: sequelize_1.default.STRING(50),
                 allowNull: false,
-                comment: '사용자 닉네임'
+                comment: "기업 연락처"
             },
-            createdAt: sequelize_1.default.DATE,
-            updatedAt: sequelize_1.default.DATE,
-            deletedAt: sequelize_1.default.DATE,
+            created_at: {
+                type: sequelize_1.default.DATE,
+                allowNull: false,
+                defaultValue: sequelize_1.default.NOW
+            }
         }, {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             underscored: false,
-            modelName: 'User',
-            tableName: 'user',
-            paranoid: true,
+            modelName: 'Company',
+            tableName: 'company',
+            paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'
         });
     }
     static associate() {
-        User.belongsTo(company_1.default, { foreignKey: 'com_seq', targetKey: 'com_seq' });
-        User.hasMany(notice_1.default, { foreignKey: 'user_seq', sourceKey: 'user_seq' });
+        Company.hasMany(user_1.default, { foreignKey: 'com_seq', sourceKey: 'com_seq' });
+        Company.hasMany(warehouse_1.default, { foreignKey: 'com_seq', sourceKey: 'com_seq' });
+        Company.hasMany(loading_1.default, { foreignKey: 'com_seq', sourceKey: 'com_seq' });
     }
 }
-exports.default = User;
+exports.default = Company;

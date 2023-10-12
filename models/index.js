@@ -1,49 +1,43 @@
-const Sequelize = require('sequelize')
-const User = require('./user')
-const Company = require('./company')
-const Client = require('./client')
-const Warehouse = require('./warehouse')
-const Rack = require('./rack')
-const Loading = require('./loading')
-const Notice = require('./notice')
-const Stock = require('./stock')
-
-const env = process.env.NODE_ENV || 'development'
-const config = require('../config/config.js')[env]
-const db = {}
-
-const sequelize = new Sequelize(config.database, config.username, config.password, config)
-
-db.sequelize = sequelize
-
-db.User = User
-db.Company = Company
-db.Client = Client
-db.Warehouse = Warehouse
-db.Rack = Rack
-db.Loading = Loading
-db.Notice = Notice
-db.Stock = Stock
-db.Client = Client
-
-User.initiate(sequelize)
-Company.initiate(sequelize)
-Client.initiate(sequelize)
-Warehouse.initiate(sequelize)
-Rack.initiate(sequelize)
-Loading.initiate(sequelize)
-Notice.initiate(sequelize)
-Stock.initiate(sequelize)
-Client.initiate(sequelize)
-
-User.associate(db)
-Company.associate(db)
-Client.associate(db)
-Warehouse.associate(db)
-Rack.associate(db)
-Loading.associate(db)
-Notice.associate(db)
-Stock.associate(db)
-Client.associate(db)
-
-module.exports = db
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Stock = exports.Notice = exports.Loading = exports.Rack = exports.Warehouse = exports.Client = exports.Company = exports.User = exports.sequelize = void 0;
+const sequelize_1 = __importDefault(require("sequelize"));
+const config_1 = __importDefault(require("../config/config"));
+const user_1 = __importDefault(require("./user"));
+exports.User = user_1.default;
+const company_1 = __importDefault(require("./company"));
+exports.Company = company_1.default;
+const client_1 = __importDefault(require("./client"));
+exports.Client = client_1.default;
+const warehouse_1 = __importDefault(require("./warehouse"));
+exports.Warehouse = warehouse_1.default;
+const rack_1 = __importDefault(require("./rack"));
+exports.Rack = rack_1.default;
+const loading_1 = __importDefault(require("./loading"));
+exports.Loading = loading_1.default;
+const notice_1 = __importDefault(require("./notice"));
+exports.Notice = notice_1.default;
+const stock_1 = __importDefault(require("./stock"));
+exports.Stock = stock_1.default;
+const env = process.env.NODE_ENV || 'development';
+const config = config_1.default[env];
+exports.sequelize = new sequelize_1.default.Sequelize(config.database, config.username, config.password, config);
+user_1.default.initiate(exports.sequelize);
+company_1.default.initiate(exports.sequelize);
+client_1.default.initiate(exports.sequelize);
+warehouse_1.default.initiate(exports.sequelize);
+rack_1.default.initiate(exports.sequelize);
+loading_1.default.initiate(exports.sequelize);
+notice_1.default.initiate(exports.sequelize);
+stock_1.default.initiate(exports.sequelize);
+user_1.default.associate();
+company_1.default.associate();
+client_1.default.associate();
+warehouse_1.default.associate();
+rack_1.default.associate();
+loading_1.default.associate();
+notice_1.default.associate();
+stock_1.default.associate();

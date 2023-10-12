@@ -27,50 +27,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = __importStar(require("sequelize"));
-const company_1 = __importDefault(require("./company"));
-const notice_1 = __importDefault(require("./notice"));
-class User extends sequelize_1.Model {
+const stock_1 = __importDefault(require("./stock"));
+class Client extends sequelize_1.Model {
     static initiate(sequelize) {
-        User.init({
-            user_seq: {
+        Client.init({
+            cl_seq: {
                 type: sequelize_1.default.INTEGER,
                 primaryKey: true,
                 autoIncrement: true,
-                comment: "사용자 식별자"
+                comment: "거래처 식별자"
             },
-            user_id: {
+            cl_business_num: {
+                type: sequelize_1.default.STRING(100),
+                allowNull: false,
+                comment: "거래처 사업자등록번호"
+            },
+            cl_name: {
                 type: sequelize_1.default.STRING(50),
                 allowNull: false,
-                unique: true,
-                comment: "사용자 로그인 아이디"
+                comment: "거래처명"
             },
-            user_pw: {
-                type: sequelize_1.default.STRING(200),
+            cl_address: {
+                type: sequelize_1.default.STRING(600),
                 allowNull: false,
-                comment: "사용자 로그인 패스워드"
+                comment: "거래처 주소"
             },
-            user_nick: {
+            cl_tel: {
                 type: sequelize_1.default.STRING(50),
                 allowNull: false,
-                comment: '사용자 닉네임'
-            },
-            createdAt: sequelize_1.default.DATE,
-            updatedAt: sequelize_1.default.DATE,
-            deletedAt: sequelize_1.default.DATE,
+                comment: "거래처 연락처"
+            }
         }, {
             sequelize,
-            timestamps: true,
+            timestamps: false,
             underscored: false,
-            modelName: 'User',
-            tableName: 'user',
-            paranoid: true,
+            modelName: 'Client',
+            tableName: 'client',
+            paranoid: false,
             charset: 'utf8',
             collate: 'utf8_general_ci'
         });
     }
     static associate() {
-        User.belongsTo(company_1.default, { foreignKey: 'com_seq', targetKey: 'com_seq' });
-        User.hasMany(notice_1.default, { foreignKey: 'user_seq', sourceKey: 'user_seq' });
+        Client.hasMany(stock_1.default, { foreignKey: 'cl_seq', sourceKey: 'cl_seq' });
     }
 }
-exports.default = User;
+exports.default = Client;
